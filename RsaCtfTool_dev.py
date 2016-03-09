@@ -106,7 +106,7 @@ class PrivateKey(object):
         return inv
 
 class TimeoutError(Exception):
-	pass
+    pass
 # source http://stackoverflow.com/a/22348885
 class timeout:
     def __init__(self, seconds=1, error_message='[-] Timeout'):
@@ -121,28 +121,45 @@ class timeout:
         signal.alarm(0)
 
 
+def noveltyprimes(pub_key):
+    primes = [ 89681 ] # Jevons number p
+    return
+
+
 if __name__ == "__main__":
     """Main method (entrypoint)
     """
     parser = argparse.ArgumentParser(description='RSA CTF Tool')
-    parser.add_argument('--publickey',
-                        dest='public_key',
+    group = parser.add_mutually_exclusive_group(required=True)
+    group.add_argument('--publickey',
                         help='public key file',
-                        required=True)
+                        default=None)
+    group.add_argument('--createpub',
+                        help='Take n and e from command line and just print a public key and exit.',
+                        action='store_true')
     parser.add_argument('--uncipher',
-                        dest='uncipher',
                         help='uncipher a file',
                         default=None)
     parser.add_argument('--verbose',
-                        dest='verbose',
                         help='verbose mode (display n, e, p and q)',
                         action='store_true')
     parser.add_argument('--private',
-                        dest='private',
                         help='Display private key if recovered',
                         action='store_true')
+    parser.add_argument('--n', type=long, help='Specify the modulus. Only used for creating public key file with --createpub.')
+    parser.add_argument('--e', type=long, help='Specify the public exponent. Only used for creating public key file with --createpub.')
 
     args = parser.parse_args()
+
+    if args.createpub:
+        if args.n is None or args.e is None:
+            raise Exception("[-] Specify both modulus and exponent on command line.")
+
+        pub_key = RSA.construct((args.n, args.e))
+        print pub_key.publickey().exportKey()
+        quit()
+    
+    
 
     # Open cipher file
     unciphered = None
@@ -150,110 +167,21 @@ if __name__ == "__main__":
         cipher = open(args.uncipher, 'r').read().strip()
 
     # Load public key
-    key = open(args.public_key, 'r').read()
+    key = open(args.publickey, 'r').read()
     pub_key = PublicKey(key)
     priv_key = None
 
-    # Hastad's attack
-    if pub_key.e == 3 and args.uncipher is not None:
-        if args.verbose:
-            print "[*] Try Hastad's attack"
-
-        orig = s2n(cipher)
-        c = orig
-        while True:
-            m = gmpy.root(c, 3)[0]
-            if pow(m, 3, pub_key.n) == orig:
-                unciphered = n2s(m)
-                break
-            c += pub_key.n
-    else:
-        if args.verbose:
-            print "[*] Try weak key attack via factordb.com"
-        try:
-            pub_key.prime_factors()
+    # "primes" of the form 31337 - 313333337 - see ekoparty 2015 "rsa 2070" not all numbers in this form are prime but some are (25 digit is prime)
+    maxlen = 25 # max number of digits in the final integer. a 25 digit number in this form is prime.
+    for i in range(maxlen-4):
+        prime = long("3133" + ("3" * i) + "7")
+        if pub_key.n % prime == 0:
+            pub_key.q = prime
+            pub_key.p = pub_key.n / pub_key.q
             priv_key = PrivateKey(long(pub_key.p),
                                   long(pub_key.q),
                                   long(pub_key.e),
                                   long(pub_key.n))
-
-            if args.uncipher is not None:
-                unciphered = priv_key.decrypt(cipher)
-        except FactorizationError:
-            unciphered = None
-
-    if unciphered is None and priv_key is None:
-        if args.verbose:
-            print "[*] Try Wiener's attack"
-
-        # Wiener's attack
-        wiener = WienerAttack(pub_key.n,
-                              pub_key.e)
-        if wiener.p is not None and wiener.q is not None:
-            pub_key.p = wiener.p
-            pub_key.q = wiener.q
-            priv_key = PrivateKey(long(pub_key.p),
-                                  long(pub_key.q),
-                                  long(pub_key.e),
-                                  long(pub_key.n))
-
-            if args.uncipher is not None:
-                unciphered = priv_key.decrypt(cipher)
-
-    if unciphered is None and priv_key is None:
-        if args.verbose:
-            print "[*] Try Small q attack"
-
-	# Try an attack where q < 100,000, from BKPCTF2016 - sourcekris
-	for prime in primes(100000):
-	    if pub_key.n % prime == 0:
-		pub_key.q = prime
-		pub_key.p = pub_key.n / pub_key.q
-		priv_key = PrivateKey(long(pub_key.p),
-				  long(pub_key.q),
-				  long(pub_key.e),
-				  long(pub_key.n))
-
-		if args.uncipher is not None:
-			unciphered = priv_key.decrypt(cipher)
-    try: 
-	    if unciphered is None and priv_key is None and cipher is not None:	
-		if args.verbose:
-			print "[*] Try common factor attack"
-
-		# Try an attack where the public key has a common factor with the ciphertext - sourcekris
-		commonfactor = gcd(pub_key.n, s2n(cipher))
-		
-		if commonfactor > 1:
-			pub_key.q = commonfactor
-			pub_key.p = pub_key.n / pub_key.q
-			priv_key = PrivateKey(long(pub_key.p),
-				       long(pub_key.q),
-				       long(pub_key.e),
-				       long(pub_key.n))
-
-			if args.uncipher is not None:
-				unciphered = priv_key.decrypt(cipher)
-    except NameError:
-	# ciphertext wasnt loaded from cli
-	pass
-
-    if unciphered is None and priv_key is None:	
-        if args.verbose:
-		print "[*] Try fermat factorization due to close primes attack"
-
-	# Try an attack where the primes are too close together from BKPCTF2016 - sourcekris
-	with timeout(seconds=30):	
-		pub_key.p, pub_key.q = fermat(pub_key.n)	
-
-	if pub_key.q is not None:
-		priv_key = PrivateKey(long(pub_key.p),
-                               long(pub_key.q),
-                               long(pub_key.e),
-                               long(pub_key.n))
-
-		if args.uncipher is not None:
-			unciphered = priv_key.decrypt(cipher)
 
     if priv_key is not None and args.private:
         print priv_key
