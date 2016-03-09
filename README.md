@@ -12,7 +12,7 @@ Attacks :
  - Gimmicky Primes method
 
 ## Usage:
-usage: RsaCtfTool.py [-h] (--publickey PUBLICKEY | --createpub)
+usage: RsaCtfTool.py [-h] \(--publickey PUBLICKEY | --createpub\)
                          [--uncipher UNCIPHER] [--verbose] [--private] [--n N]
                          [--e E]
 
