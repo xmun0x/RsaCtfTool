@@ -2,6 +2,9 @@
 # -*- coding: utf-8 -*-
 
 """
+RsaCrfTool-Continued-Again - cleaned-up and updated requirements
+author: xmunoz
+
 RsaCtfTool-Continued - RSA CTF Cracking tool for simple CTF challenges
 author: sourcekris (@CTFKris)
 
@@ -16,8 +19,7 @@ this stuff is worth it, you can buy me a beer in return.
 
 from Crypto.PublicKey import RSA
 import signal
-import gmpy
-from libnum import *
+import gmpy2
 import requests
 import re
 import argparse
@@ -72,7 +74,7 @@ class PrivateKey(object):
            :param n: n from public key
         """
         t = (p-1)*(q-1)
-        d = invmod(e,t)
+        d = long(gmpy2.invert(e,t))
         self.key = RSA.construct((n, e, d, p, q))
 
     def decrypt(self, cipher):
@@ -109,7 +111,7 @@ class RSAAttack(object):
             orig = s2n(self.cipher)
             c = orig
             while True: 
-                m = gmpy.root(c, 3)[0]
+                m = gmpy2.iroot(c, 3)[0]
                 if pow(m, 3, self.pub_key.n) == orig:
                     self.unciphered = n2s(m)
                     break
@@ -149,7 +151,8 @@ class RSAAttack(object):
 
     def smallq(self):
         # Try an attack where q < 100,000, from BKPCTF2016 - sourcekris
-        for prime in primes(100000):
+        primes_100000 = filter(gmpy2.is_prime, range(2,100000))
+        for prime in primes_100000:
             if self.pub_key.n % prime == 0:
                 self.pub_key.q = prime
                 self.pub_key.p = self.pub_key.n / self.pub_key.q
@@ -196,7 +199,7 @@ class RSAAttack(object):
     def commonfactors(self):
         if self.args.uncipher:
             # Try an attack where the public key has a common factor with the ciphertext - sourcekris
-            commonfactor = gcd(self.pub_key.n, s2n(self.cipher))
+            commonfactor = gmpy2.gcd(self.pub_key.n, s2n(self.cipher))
             
             if commonfactor > 1:
                 self.pub_key.q = commonfactor
@@ -335,7 +338,7 @@ if __name__ == "__main__":
         for x in attackobjs:
             for y in attackobjs:
                 if x.pub_key.n <> y.pub_key.n:
-                    g = gcd(x.pub_key.n, y.pub_key.n)
+                    g = gmpy2.gcd(x.pub_key.n, y.pub_key.n)
                     if g != 1:
                         # TODO: Finish this :P
                         print g
@@ -346,4 +349,3 @@ if __name__ == "__main__":
         # Single key case
         attackobj = RSAAttack(args)
         attackobj.attack()
-

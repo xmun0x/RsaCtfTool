@@ -1,7 +1,7 @@
 #!/usr/bin/python
 
 from subprocess import check_output
-import libnum
+import gmpy2
 
 # Source:
 # https://0day.work/0ctf-2016-quals-writeups/
@@ -70,7 +70,7 @@ def partial_q(e,dp,dq,qi,part_q):
     for k in range(1,N,1):  
         p = (e * dp -1)/k +1
         try:
-            m = libnum.invmod(q, p)
+            m = gmpy2.invert(q, p)
             if m == qi:
                 break
         except:
