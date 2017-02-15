@@ -14,10 +14,17 @@ Attacks :
  - Self-Initializing Quadratic Sieve (SIQS) using Yafu - NEW
  - Common factor attacks across multiple keys - NEW
 
-## Usage:
+## Installation
+```
+pip install -r requirements.txt
+```
+
+## Usage
+```
 usage: RsaCtfTool.py [-h] \(--publickey PUBLICKEY | --createpub\)
                          [--uncipher UNCIPHER] [--verbose] [--private] [--n N]
                          [--e E]
+```
 
 Mode 1 - Attack RSA (specify --publickey)
  - publickey : public rsa key to crack. You can import multiple public keys with wildcards.
@@ -28,16 +35,22 @@ Mode 2 - Create a Public Key File Given n and e (specify --createpub)
  - n - modulus
  - e - public exponent
 
-### Uncipher file :
+### Uncipher file
+```
 ./RsaCtfTool.py --publickey ./key.pub --uncipher ./ciphered\_file
+```
 
-### Print private key :
+### Print private key
+```
 ./RsaCtfTool.py --publickey ./key.pub --private
+```
 
-### Generate a public key :
+### Generate a public key
+```
 ./RsaCtfTool.py --createpub --n 7828374823761928712873129873981723...12837182 --e 65537
+```
 
-#### Examples :
+#### Examples
  - weak\_public.pub, weak\_public.cipher : weak public key
  - wiener.pub, wiener.cipher : key vulnerable to Wiener's attack
  - small\exponent.pub, small\_exponent.cipher : key with e=3, vulnerable to Hastad's attack
@@ -47,10 +60,6 @@ Mode 2 - Create a Public Key File Given n and e (specify --createpub)
  - fermat.pub : public key with another vulnerability to fermat factorization
  - pastctfprimes.pub : public key with a prime from a past CTF
  - siqs.pub: 256bit public key that is factored in 30 seconds with SIQS
-
-#### Requirements:
- - GMPY
- - libnum (https://github.com/hellman/libnum.git)
 
 #### Todo
  - Implement multiple ciphertext handling for more attacks
