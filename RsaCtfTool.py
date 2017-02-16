@@ -108,12 +108,15 @@ class RSAAttack(object):
     def hastads(self):
         # Hastad's attack
         if self.pub_key.e == 3 and self.args.uncipher is not None:
-            orig = s2n(self.cipher)
+            orig = int(self.cipher.encode("hex"), 16)
             c = orig
             while True: 
                 m = gmpy2.iroot(c, 3)[0]
                 if pow(m, 3, self.pub_key.n) == orig:
-                    self.unciphered = n2s(m)
+                    s = hex(m)[2:].rstrip("L")
+                    if len(s) % 2 != 0:
+                        s = "0" + s
+                    self.unciphered = s.decode("hex")
                     break
                 c += self.pub_key.n
         return
@@ -199,7 +202,7 @@ class RSAAttack(object):
     def commonfactors(self):
         if self.args.uncipher:
             # Try an attack where the public key has a common factor with the ciphertext - sourcekris
-            commonfactor = gmpy2.gcd(self.pub_key.n, s2n(self.cipher))
+            commonfactor = gmpy2.gcd(self.pub_key.n, int(self.cipher.encode("hex"), 16))
             
             if commonfactor > 1:
                 self.pub_key.q = commonfactor
