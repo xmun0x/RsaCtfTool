@@ -1,0 +1,2 @@
+#!/bin/bash
+PYTHONPATH=. exec py.test "$@"
