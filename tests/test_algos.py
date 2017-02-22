@@ -1,4 +1,3 @@
-import pytest
 from factorize import RSAAttack, create_pub
 import os.path
 import inspect
@@ -20,9 +19,10 @@ def test_hastads():
     args = Args(publickey=pubkey_f, uncipher=cipher_f)
     a = RSAAttack(args)
     a.attack("hastads")
-    cleartext = "\nDidn't I tell you everything would work out in the end? Brixby gave me the "\
-"password to the secure server: 56c812da9a3955e3c81453eb035b3d37b3f1bfe407ef701d09cf68dd4bb335b1\n"
-    assert a.unciphered ==  cleartext
+    cleartext = '''\nDidn't I tell you everything would work out in the end? Brixby gave me the \
+password to the secure server: 56c812da9a3955e3c81453eb035b3d37b3f1bfe407ef701d09cf68dd4bb335b1\
+\n'''
+    assert a.unciphered == cleartext
 
 
 def test_noveltyprimes():
@@ -62,6 +62,7 @@ iYC1+mXOks0OC0LPc8Is1mW6z9uFgrc7GvHrhcyaP4k=
 -----END RSA PRIVATE KEY-----'''
     assert str(a.priv_key) == private_key
 
+
 def test_smallq():
     pubkey_f = os.path.join(TEST_DATA_PATH, "small_q.pub")
     cipher_f = os.path.join(TEST_DATA_PATH, "small_q.cipher")
@@ -89,6 +90,7 @@ bJMtE+mGE0btphU=
     assert a.unciphered == cleartext
     assert str(a.priv_key) == private_key
 
+
 def test_wiener():
     pubkey_f = os.path.join(TEST_DATA_PATH, "wiener.pub")
     cipher_f = os.path.join(TEST_DATA_PATH, "wiener.cipher")
@@ -113,6 +115,7 @@ oI+OCu+9nE8kWP0sMSwDtaYo1AoOtJrYhh1RDvAe0YYK1Pf6MszegIDTNp43aA==
     assert str(a.unciphered) == cleartext
     assert str(a.priv_key) == private_key
 
+
 def test_common_factors():
     pubkey_f = os.path.join(TEST_DATA_PATH, "common_factor.pub")
     cipher_f = os.path.join(TEST_DATA_PATH, "common_factor.cipher")
@@ -129,6 +132,7 @@ j0mjJ31NC+0sLmx5
 -----END RSA PRIVATE KEY-----'''
     assert str(a.unciphered).endswith("ALEXCTF{SMALL_PRIMES_ARE_BAD}\n")
     assert str(a.priv_key) == priv_key
+
 
 def test_fermat():
     pubkey_f = os.path.join(TEST_DATA_PATH, "close_primes.pub")
@@ -154,7 +158,7 @@ pbuhkto4xpKjg6vg3N9F7WzQyrOQaNk72DCCJdTv2dwI
     clear_text = "XtCgoEKksjKFWlqOSxqsEhK/+tsr1k5c"
     assert str(a.unciphered) == clear_text
     assert str(a.priv_key) == priv_key
-    
+
 
 def test_siqs():
     '''
@@ -165,6 +169,7 @@ def test_siqs():
     a = RSAAttack(args)
     a.attack("siqs")
     assert a.priv_key is None
+
 
 def test_createpub():
     n = long(8616460799)
@@ -177,6 +182,10 @@ MCAwDQYJKoZIhvcNAQEBBQADDwAwDAIFAgGUwf8CAwEAAQ==
 
 
 def test_createpub_crack():
-    n = long(163325259729739139586456854939342071588766536976661696628405612100543978684304953042431845499808366612030757037530278155957389217094639917994417350499882225626580260012564702898468467277918937337494297292631474713546289580689715170963879872522418640251986734692138838546500522994170062961577034037699354013013)
+    n = '''163325259729739139586456854939342071588766536976661696628405612100543978684304953042431\
+8454998083666120307570375302781559573892170946399179944173504998822256265802600125647028984684\
+6727791893733749429729263147471354628958068971517096387987252241864025198673469213883854650052\
+2994170062961577034037699354013013'''
+    n = long(n)
     e = long(65537)
-    pubkey = create_pub(n, e)
+    create_pub(n, e)

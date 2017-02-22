@@ -19,11 +19,11 @@ import signal
 import gmpy2
 import requests
 import re
-from glob import glob
 
 
 class FactorizationError(Exception):
     pass
+
 
 class PublicKey(object):
     def __init__(self, key):
@@ -69,8 +69,8 @@ class PrivateKey(object):
            :param e: exponent
            :param n: n from public key
         """
-        t = (p-1)*(q-1)
-        d = long(gmpy2.invert(e,t))
+        t = (p - 1) * (q - 1)
+        d = long(gmpy2.invert(e, t))
         self.key = RSA.construct((n, e, d, p, q))
 
     def decrypt(self, cipher):
@@ -105,7 +105,7 @@ class RSAAttack(object):
         if self.pub_key.e == 3 and self.args.uncipher is not None:
             orig = int(self.cipher.encode("hex"), 16)
             c = orig
-            while True: 
+            while True:
                 m = gmpy2.iroot(c, 3)[0]
                 if pow(m, 3, self.pub_key.n) == orig:
                     s = hex(m)[2:].rstrip("L")
@@ -130,7 +130,7 @@ class RSAAttack(object):
             from wiener import WienerAttack
         except ImportError:
             if self.args.verbose:
-                print "[*] Warning: Wiener attack module missing (wiener_attack.py)"
+                print("[*] Warning: Wiener attack module missing (wiener_attack.py)")
             return
 
         # Wiener's attack
@@ -145,7 +145,7 @@ class RSAAttack(object):
 
     def smallq(self):
         # Try an attack where q < 100,000, from BKPCTF2016 - sourcekris
-        primes_100000 = filter(gmpy2.is_prime, range(2,100000))
+        primes_100000 = filter(gmpy2.is_prime, range(2, 100000))
         for prime in primes_100000:
             if self.pub_key.n % prime == 0:
                 self.pub_key.q = prime
@@ -155,52 +155,51 @@ class RSAAttack(object):
 
         return
 
-    def fermat(self,fermat_timeout=60):
+    def fermat(self, fermat_timeout=60):
         # Try an attack where the primes are too close together from BKPCTF2016 - sourcekris
         # this attack module can be optional
         try:
             from fermat import fermat
         except ImportError:
             if self.args.verbose:
-                print "[*] Warning: Fermat factorization module missing (fermat.py)"
+                print("[*] Warning: Fermat factorization module missing (fermat.py)")
             return
 
         try:
-            with Timeout(seconds=fermat_timeout):   
-                self.pub_key.p, self.pub_key.q = fermat(self.pub_key.n)    
+            with Timeout(seconds=fermat_timeout):
+                self.pub_key.p, self.pub_key.q = fermat(self.pub_key.n)
         except FactorizationError:
             return
 
         if self.pub_key.q is not None:
-           self.priv_key = PrivateKey(long(self.pub_key.p), long(self.pub_key.q),
-                                      long(self.pub_key.e), long(self.pub_key.n))
-
+            self.priv_key = PrivateKey(long(self.pub_key.p), long(self.pub_key.q),
+                                       long(self.pub_key.e), long(self.pub_key.n))
 
     def noveltyprimes(self):
-        # "primes" of the form 31337 - 313333337 - see ekoparty 2015 "rsa 2070" 
+        # "primes" of the form 31337 - 313333337 - see ekoparty 2015 "rsa 2070"
         # not all numbers in this form are prime but some are (25 digit is prime)
-        maxlen = 25 # max number of digits in the final integer
-        for i in range(maxlen-4):
+        maxlen = 25  # max number of digits in the final integer
+        for i in range(maxlen - 4):
             prime = long("3133" + ("3" * i) + "7")
             if self.pub_key.n % prime == 0:
                 self.pub_key.q = prime
                 self.pub_key.p = self.pub_key.n / self.pub_key.q
                 self.priv_key = PrivateKey(long(self.pub_key.p), long(self.pub_key.q),
-                                           long(self.pub_key.e), long(self.pub_key.n))        
+                                           long(self.pub_key.e), long(self.pub_key.n))
 
     def commonfactors(self):
         if self.args.uncipher:
-            # Try an attack where the public key has a common factor with the ciphertext - sourcekris
+            # Try an attack where the public key has a common factor with the ciphertext
+            # - sourcekris
             commonfactor = gmpy2.gcd(self.pub_key.n, int(self.cipher.encode("hex"), 16))
-            
+
             if commonfactor > 1:
                 self.pub_key.q = commonfactor
                 self.pub_key.p = self.pub_key.n / self.pub_key.q
-                self.priv_key = PrivateKey(long(self.pub_key.p), long(self.pub_key.q), 
+                self.priv_key = PrivateKey(long(self.pub_key.p), long(self.pub_key.q),
                                            long(self.pub_key.e), long(self.pub_key.n))
 
-                unciphered = self.priv_key.decrypt(self.cipher)
-
+                self.unciphered = self.priv_key.decrypt(self.cipher)
 
     def commonmodulus(self):
         # NYI requires support for multiple public keys
@@ -213,7 +212,7 @@ class RSAAttack(object):
             from siqs import SiqsAttack
         except ImportError:
             if self.args.verbose:
-                print "[*] Warning: Yafu SIQS attack module missing (siqs.py)"
+                print("[*] Warning: Yafu SIQS attack module missing (siqs.py)")
             return
 
         siqsobj = SiqsAttack(self.args, self.pub_key.n)
@@ -227,27 +226,26 @@ class RSAAttack(object):
             self.priv_key = PrivateKey(long(self.pub_key.p), long(self.pub_key.q),
                                        long(self.pub_key.e), long(self.pub_key.n))
 
-
     def attack(self, default=None):
         if default:
-            print "[*] Performing " + default + " attack."
+            print("[*] Performing " + default + " attack.")
             getattr(self, default)()
             # check and print resulting private key
             if self.priv_key is not None:
                 if self.args.private:
-                    print self.priv_key
+                    print(self.priv_key)
         else:
             # loop through implemented attack methods and conduct attacks
             for attack in self.implemented_attacks:
                 if self.args.verbose:
-                    print "[*] Performing " + attack.__name__ + " attack."
+                    print("[*] Performing " + attack.__name__ + " attack.")
 
                 getattr(self, attack.__name__)()
 
                 # check and print resulting private key
                 if self.priv_key is not None:
                     if self.args.private:
-                        print self.priv_key
+                        print(self.priv_key)
                     break
 
                 if self.unciphered is not None:
@@ -256,12 +254,12 @@ class RSAAttack(object):
         # If we wanted to decrypt, do it now
         if self.args.uncipher is not None and self.priv_key is not None:
                 self.unciphered = self.priv_key.decrypt(self.cipher)
-                print "[+] Clear text : %s" % self.unciphered
+                print("[+] Clear text : %s" % self.unciphered)
         elif self.unciphered is not None:
-                print "[+] Clear text : %s" % self.unciphered
+                print("[+] Clear text : %s" % self.unciphered)
         else:
             if self.args.uncipher is not None:
-                print "[-] Sorry, cracking failed"
+                print("[-] Sorry, cracking failed")
 
     implemented_attacks = [hastads, factordb, noveltyprimes, smallq, wiener, commonfactors, fermat,
                            siqs]
@@ -272,10 +270,13 @@ class Timeout:
     def __init__(self, seconds=10, error_message='[-] Timeout'):
         self.seconds = seconds
         self.error_message = error_message
+
     def handle_timeout(self, signum, frame):
         raise FactorizationError(self.error_message)
+
     def __enter__(self):
         signal.signal(signal.SIGALRM, self.handle_timeout)
         signal.alarm(self.seconds)
+
     def __exit__(self, type, value, traceback):
         signal.alarm(0)

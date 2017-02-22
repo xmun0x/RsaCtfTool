@@ -2,3 +2,5 @@ gmpy2==2.0.8
 pycrypto==2.6.1
 requests==2.13.0
 sympy==1.0
+pytest==3.0.6
+flake8==3.3.0

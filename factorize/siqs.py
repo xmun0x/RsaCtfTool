@@ -12,12 +12,13 @@ import os
 import subprocess
 import re
 
+
 class SiqsAttack(object):
     def __init__(self, args, n):
         # Configuration
-        self.yafubin = "./yafu" # where the binary is
-        self.threads = 2       # number of threads
-        self.maxtime = 180     # max time to try the sieve
+        self.yafubin = "./yafu"  # where the binary is
+        self.threads = 2  # number of threads
+        self.maxtime = 180  # max time to try the sieve
 
         self.n = n
         self.p = None
@@ -27,20 +28,20 @@ class SiqsAttack(object):
     def testyafu(self):
         with open('/dev/null') as DN:
             try:
-                yafutest = subprocess.check_output([self.yafubin,'siqs(1549388302999519)'], stderr=DN)
+                yafutest = subprocess.check_output([self.yafubin, 'siqs(1549388302999519)'],
+                                                   stderr=DN)
             except:
                 yafutest = ""
 
         if '48670331' in yafutest:
             # yafu is working
             if self.verbose:
-                print "[*] Yafu SIQS is working."
+                print("[*] Yafu SIQS is working.")
             return True
         else:
             if self.verbose:
-                print "[*] Yafu SIQS is not working."
+                print("[*] Yafu SIQS is not working.")
             return False
-                     
 
     def checkyafu(self):
         # check if yafu exists and we can execute it
@@ -50,26 +51,26 @@ class SiqsAttack(object):
             return False
 
     def benchmarksiqs(self):
-        # NYI 
+        # NYI
         # return the time to factor a 256 bit RSA modulus
         return
 
     def doattack(self):
         with open('/dev/null') as DN:
             yafurun = subprocess.check_output(
-                [self.yafubin,'siqs('+str(self.n)+')',
-                 '-siqsT',  str(self.maxtime),
-                 '-threads',str(self.threads)], stderr=DN)
+                [self.yafubin, 'siqs(' + str(self.n) + ')',
+                 '-siqsT', str(self.maxtime),
+                 '-threads', str(self.threads)], stderr=DN)
 
             primesfound = []
 
             if 'input too big for SIQS' in yafurun:
                 if self.verbose:
-                    print "[-] Modulus too big for SIQS method."
+                    print("[-] Modulus too big for SIQS method.")
                 return
 
             for line in yafurun.splitlines():
-                if re.search('^P[0-9]+\ =\ [0-9]+$',line):
+                if re.search('^P[0-9]+\ =\ [0-9]+$', line):
                     primesfound.append(int(line.split('=')[1]))
 
             if len(primesfound) == 2:
@@ -78,10 +79,8 @@ class SiqsAttack(object):
 
             if len(primesfound) > 2:
                 if self.verbose:
-                    print "[*] > 2 primes found. Is key multiprime?"
+                    print("[*] > 2 primes found. Is key multiprime?")
 
             if len(primesfound) < 2:
                 if self.verbose:
-                    print "[*] SIQS did not factor modulus."
-                
-        return
+                    print("[*] SIQS did not factor modulus.")
