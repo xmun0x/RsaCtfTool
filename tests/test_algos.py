@@ -1,5 +1,5 @@
 import pytest
-from factorize import RSAAttack
+from factorize import RSAAttack, create_pub
 import os.path
 import inspect
 
@@ -156,17 +156,27 @@ pbuhkto4xpKjg6vg3N9F7WzQyrOQaNk72DCCJdTv2dwI
     assert str(a.priv_key) == priv_key
     
 
-def test_fermat2():
-    pass
-
 def test_siqs():
-    pass
+    '''
+    SIQS is broken
+    '''
+    pubkey_f = os.path.join(TEST_DATA_PATH, "siqs.pub")
+    args = Args(publickey=pubkey_f, uncipher=None, private=True, verbose=False)
+    a = RSAAttack(args)
+    a.attack("siqs")
+    assert a.priv_key is None
 
 def test_createpub():
-    pass
+    n = long(8616460799)
+    e = long(65537)
+    pubkey = create_pub(n, e)
+    val = '''-----BEGIN PUBLIC KEY-----
+MCAwDQYJKoZIhvcNAQEBBQADDwAwDAIFAgGUwf8CAwEAAQ==
+-----END PUBLIC KEY-----'''
+    assert pubkey == val
 
-def test_createpub_exception():
-    pass
 
 def test_createpub_crack():
-    pass
+    n = long(163325259729739139586456854939342071588766536976661696628405612100543978684304953042431845499808366612030757037530278155957389217094639917994417350499882225626580260012564702898468467277918937337494297292631474713546289580689715170963879872522418640251986734692138838546500522994170062961577034037699354013013)
+    e = long(65537)
+    pubkey = create_pub(n, e)

@@ -17,9 +17,10 @@ this stuff is worth it, you can buy me a beer in return.
 ----------------------------------------------------------------------------
 '''
 
-from factorize import RSAAttack
-from Crypto.PublicKey import RSA                                                                    
+from factorize import RSAAttack, create_pub
+from Crypto.PublicKey import RSA
 import argparse
+
 
 def main():
     parser = argparse.ArgumentParser(description='RSA CTF Tool Continued')
@@ -38,11 +39,9 @@ def main():
     if args.createpub:
         if args.n is None or args.e is None:
             raise Exception("Specify both a modulus and exponent on the command line. See --help for info.")
-        print RSA.construct((args.n, args.e)).publickey().exportKey()
-        quit()
-
+        print create_pub(args.n, args.e)
     # Multi Key case
-    if '*' in args.publickey or '?' in args.publickey:
+    elif '*' in args.publickey or '?' in args.publickey:
         # do multikey stuff
         pubkeyfilelist = glob(args.publickey)
         if args.verbose:
