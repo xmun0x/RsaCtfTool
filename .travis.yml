@@ -4,6 +4,8 @@ python:
 before_install:
   - sudo apt-get -qq update
   - sudo apt-get install -y libgmp3-dev libmpfr-dev libmpc-dev
+  - dpkg-query -l libmpc-dev
+  - cat /etc/lsb-release
 install:
   - "pip install -r requirements-dev.txt"
 before_script:
