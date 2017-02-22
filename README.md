@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.org/xmunoz/RsaCtfTool.svg?branch=master)](https://travis-ci.org/xmunoz/RsaCtfTool)
+
 # RsaCtfTool
 RSA tool for ctf - uncipher data from weak public key and try to recover private key
 Automatic selection of best attack for the given public key
