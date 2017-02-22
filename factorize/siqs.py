@@ -9,6 +9,8 @@
 #
 
 import os
+import os.path
+import inspect
 import subprocess
 import re
 
@@ -16,7 +18,8 @@ import re
 class SiqsAttack(object):
     def __init__(self, args, n):
         # Configuration
-        self.yafubin = "./yafu"  # where the binary is
+        self.yafubin = os.path.join(os.path.dirname(os.path.abspath(inspect.getfile(
+    inspect.currentframe()))), "yafu")
         self.threads = 2  # number of threads
         self.maxtime = 180  # max time to try the sieve
 

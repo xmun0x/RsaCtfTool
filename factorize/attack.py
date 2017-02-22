@@ -94,6 +94,10 @@ class RSAAttack(object):
         self.priv_key = None
         self.args = args
         self.unciphered = None
+        if hasattr(args, "attack"):
+            self.attack_name = args.attack
+        else:
+            self.attack_name = None
         # Load ciphertext
         if args.uncipher is not None:
             self.cipher = open(args.uncipher, 'r').read().strip()
@@ -216,7 +220,6 @@ class RSAAttack(object):
             return
 
         siqsobj = SiqsAttack(self.args, self.pub_key.n)
-
         if siqsobj.checkyafu() and siqsobj.testyafu():
             siqsobj.doattack()
 
@@ -227,6 +230,8 @@ class RSAAttack(object):
                                        long(self.pub_key.e), long(self.pub_key.n))
 
     def attack(self, default=None):
+        if self.attack_name:
+            default = self.attack_name
         if default:
             print("[*] Performing " + default + " attack.")
             getattr(self, default)()
