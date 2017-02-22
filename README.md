@@ -1,10 +1,7 @@
 [![Build Status](https://travis-ci.org/xmunoz/RsaCtfTool.svg?branch=master)](https://travis-ci.org/xmunoz/RsaCtfTool)
 
 # RsaCtfTool
-RSA tool for ctf - uncipher data from weak public key and try to recover private key
-Automatic selection of best attack for the given public key
-
-Attacks :
+RsaCtfTool is a utility to uncipher data from a weak public key and try to recover the private key. Here is the list of attacks implemented in RsaCtfTool:
  - Weak public key factorization
  - Wiener's attack
  - Hastad's attack (Small exponent attack)
@@ -12,10 +9,9 @@ Attacks :
  - Common factor between ciphertext and modulus attack
  - Fermat's factorisation for close p and q
  - Gimmicky Primes method
- - Past CTF Primes method
- - Self-Initializing Quadratic Sieve (SIQS) using Yafu - NEW
- - Common factor attacks across multiple keys - NEW
-
+ - Self-Initializing Quadratic Sieve (SIQS) using Yafu
+ - Common factor attacks across multiple keys
+ 
 ## Installation
 ```
 pip install -r requirements.txt
