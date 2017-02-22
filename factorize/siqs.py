@@ -19,7 +19,7 @@ class SiqsAttack(object):
     def __init__(self, args, n):
         # Configuration
         self.yafubin = os.path.join(os.path.dirname(os.path.abspath(inspect.getfile(
-    inspect.currentframe()))), "yafu")
+            inspect.currentframe()))), "yafu")
         self.threads = 2  # number of threads
         self.maxtime = 180  # max time to try the sieve
 
