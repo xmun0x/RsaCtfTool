@@ -19,18 +19,18 @@ pip install -r requirements.txt
 
 ## Usage
 ```
-python RsaCtfToolcli.py
+$ python RsaCtfToolcli.py
 usage: RsaCtfToolcli.py [-h] (--publickey PUBLICKEY | --createpub)
                         [--uncipher UNCIPHER] [--verbose] [--private] [--n N]
                         [--e E]
 ```
 
-Mode 1 - Attack RSA (specify --publickey)
+Mode 1 - Attack RSA (`--publickey`)
  - publickey : public rsa key to crack. You can import multiple public keys with wildcards.
  - uncipher : cipher message to decrypt
  - private : display private rsa key if recovered
 
-Mode 2 - Create a Public Key File Given n and e (specify --createpub)
+Mode 2 - Create a Public Key File Given n and e (`--createpub`)
  - n - modulus
  - e - public exponent
 
