@@ -13,7 +13,7 @@ class Args(object):
         for i in kwargs:
             setattr(self, i, kwargs[i])
 
-'''
+
 def test_hastads():
     pubkey_f = os.path.join(TEST_DATA_PATH, "small_exponent.pub")
     cipher_f = os.path.join(TEST_DATA_PATH, "small_exponent.cipher")
@@ -23,7 +23,7 @@ def test_hastads():
     cleartext = "\nDidn't I tell you everything would work out in the end? Brixby gave me the "\
 "password to the secure server: 56c812da9a3955e3c81453eb035b3d37b3f1bfe407ef701d09cf68dd4bb335b1\n"
     assert a.unciphered ==  cleartext
-'''
+
 
 def test_noveltyprimes():
     pubkey_f = os.path.join(TEST_DATA_PATH, "elite_primes.pub")
@@ -90,8 +90,8 @@ bJMtE+mGE0btphU=
     assert str(a.priv_key) == private_key
 
 def test_wiener():
-    pubkey_f = os.path.join(TEST_DATA_PATH, "new_wiener.pub")
-    cipher_f = os.path.join(TEST_DATA_PATH, "new_wiener.cipher")
+    pubkey_f = os.path.join(TEST_DATA_PATH, "wiener.pub")
+    cipher_f = os.path.join(TEST_DATA_PATH, "wiener.cipher")
     args = Args(publickey=pubkey_f, uncipher=cipher_f, private=True)
     a = RSAAttack(args)
     a.attack("wiener")
@@ -114,10 +114,47 @@ oI+OCu+9nE8kWP0sMSwDtaYo1AoOtJrYhh1RDvAe0YYK1Pf6MszegIDTNp43aA==
     assert str(a.priv_key) == private_key
 
 def test_common_factors():
-    pass
+    pubkey_f = os.path.join(TEST_DATA_PATH, "common_factor.pub")
+    cipher_f = os.path.join(TEST_DATA_PATH, "common_factor.cipher")
+    args = Args(publickey=pubkey_f, uncipher=cipher_f, private=True)
+    a = RSAAttack(args)
+    a.attack("factordb")
+    priv_key = '''-----BEGIN RSA PRIVATE KEY-----
+MIH5AgEAAjJSqZ4knufPPAy/ljoAlmF3K8nN9uHj+/xuRKB6Xg+JRFep+Bw64TKs
+VoPTWyi6XDJCQwIDAQABAjIzrQnKBvUPnpCxrK5x85DWuS8dbTtmFP+HEYHE3wja
+TF9QEkV6ZDCUBers1jQeQwJ5MQIaAImWgwYMdrnA3lgaaeDqnZG+0Qcb6x2SSjcC
+GgCZzedK7e6Hrf/daEy8R451mHC08gaS9lJVAhlmZEB1y+i/LC1L27xXycIhqKPe
+aoR6qVfZAhlbPhKLmhFavne/AqQbQhwaWT/rqHUL9EMtAhk5pem+TgbW3zCYF8v7
+j0mjJ31NC+0sLmx5
+-----END RSA PRIVATE KEY-----'''
+    assert str(a.unciphered).endswith("ALEXCTF{SMALL_PRIMES_ARE_BAD}\n")
+    assert str(a.priv_key) == priv_key
 
 def test_fermat():
-    pass
+    pubkey_f = os.path.join(TEST_DATA_PATH, "close_primes.pub")
+    cipher_f = os.path.join(TEST_DATA_PATH, "close_primes.cipher")
+    args = Args(publickey=pubkey_f, uncipher=cipher_f, private=True)
+    a = RSAAttack(args)
+    a.attack("fermat")
+    priv_key = '''-----BEGIN RSA PRIVATE KEY-----
+MIICXQIBAAKBgQCG6ZYBPnfEFpkADglB1IDARrL3Gk+Vs1CsGk1CY3KSPYpFYdlv
+v7AkBZWQcgGtMiXPbt7X3gLZHDhv+sKAty0PlcrnH0Lr4NPtrqznzqMZX6MsHGCA
+2Q74U9Bt1Fcskrn4MQu8DGNaXiaVJRF1EDCmWQgWVU52MDG8uzHj8RnGXwIDAQAB
+AoGACw57r7Bp6lUbxuhfk9iRkLB6nEu4uAERHHmvWUCDND785QDG7CSej+UxQ7xE
+LOiONrjUZIaaXyaz7WF0rU3V0HG1IckO3qHsvdoomzC0naE+cQY2V/mf4dFwmVX+
+galTBEjTvstZg4UGvnR02Qfckk9G1xlW6bUogBroR9wxC+ECQQC518i7Ibrvzyis
+9DvqX6ZhdVnjf0Xn7uFSUNEv25254VrzG0DaGRvw0hmkI3TIf2qs8PILMfQ3jM2y
+knHXKhaxAkEAudfIuyG6788orPQ76l+mYXVZ439F5+7hUlDRL9udueFa8xtA2hkb
+8NIZpCN0yH9qrPDyCzH0N4zNspJx1yoSDwJBAJcUg00OCMi3opuoGaVZiQsluaOm
+bhA1NNwUc1rysPDR8Xw9JaWoT/yg8NNtN51faDubzUmonJ8kSnznbMC8qKECQAHd
+qsRGOGxD9jKWWSunPjJoTTi9hGQpv9VlvlPuroy5OIKMWYBXFDK8yUkemgORU+7c
+lHGMVNlh7obGdaIlZ/0CQQCvqFehxCUJFnn7HGE2PljWSgJKgnFYoa4eiGUFTWva
+pbuhkto4xpKjg6vg3N9F7WzQyrOQaNk72DCCJdTv2dwI
+-----END RSA PRIVATE KEY-----'''
+    clear_text = "XtCgoEKksjKFWlqOSxqsEhK/+tsr1k5c"
+    assert str(a.unciphered) == clear_text
+    assert str(a.priv_key) == priv_key
+    
 
 def test_fermat2():
     pass
