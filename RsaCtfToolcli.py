@@ -36,6 +36,7 @@ def main():
                         action='store_true')
     parser.add_argument('--private', help='Display private key if recovered',
                         action='store_true')
+    parser.add_argument('--attack', help='Name of the attack to deploy.')
     parser.add_argument('--n', type=long, help='Specify the modulus in --createpub mode.')
     parser.add_argument('--e', type=long, help='Specify the public exponent in --createpub mode.')
 

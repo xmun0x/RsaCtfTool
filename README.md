@@ -1,8 +1,7 @@
-# RsaCtfTool
-RSA tool for ctf - uncipher data from weak public key and try to recover private key
-Automatic selection of best attack for the given public key
+[![Build Status](https://travis-ci.org/xmunoz/RsaCtfTool.svg?branch=master)](https://travis-ci.org/xmunoz/RsaCtfTool)
 
-Attacks :
+# RsaCtfTool
+RsaCtfTool is a utility to uncipher data from a weak public key and try to recover the private key. Here is the list of attacks implemented in RsaCtfTool:
  - Weak public key factorization
  - Wiener's attack
  - Hastad's attack (Small exponent attack)
@@ -10,10 +9,9 @@ Attacks :
  - Common factor between ciphertext and modulus attack
  - Fermat's factorisation for close p and q
  - Gimmicky Primes method
- - Past CTF Primes method
- - Self-Initializing Quadratic Sieve (SIQS) using Yafu - NEW
- - Common factor attacks across multiple keys - NEW
-
+ - Self-Initializing Quadratic Sieve (SIQS) using Yafu
+ - Common factor attacks across multiple keys
+ 
 ## Installation
 ```
 pip install -r requirements.txt
@@ -21,18 +19,18 @@ pip install -r requirements.txt
 
 ## Usage
 ```
-python RsaCtfToolcli.py
+$ python RsaCtfToolcli.py
 usage: RsaCtfToolcli.py [-h] (--publickey PUBLICKEY | --createpub)
                         [--uncipher UNCIPHER] [--verbose] [--private] [--n N]
                         [--e E]
 ```
 
-Mode 1 - Attack RSA (specify --publickey)
+Mode 1 - Attack RSA (`--publickey`)
  - publickey : public rsa key to crack. You can import multiple public keys with wildcards.
  - uncipher : cipher message to decrypt
  - private : display private rsa key if recovered
 
-Mode 2 - Create a Public Key File Given n and e (specify --createpub)
+Mode 2 - Create a Public Key File Given n and e (`--createpub`)
  - n - modulus
  - e - public exponent
 

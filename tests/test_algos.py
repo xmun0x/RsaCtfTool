@@ -161,14 +161,11 @@ pbuhkto4xpKjg6vg3N9F7WzQyrOQaNk72DCCJdTv2dwI
 
 
 def test_siqs():
-    '''
-    SIQS is broken
-    '''
     pubkey_f = os.path.join(TEST_DATA_PATH, "siqs.pub")
     args = Args(publickey=pubkey_f, uncipher=None, private=True, verbose=False)
     a = RSAAttack(args)
     a.attack("siqs")
-    assert a.priv_key is None
+    assert a.priv_key is not None
 
 
 def test_createpub():
