@@ -1,4 +1,4 @@
 gmpy2==2.0.8
-pycrypto==2.6.1
+cryptography==1.7.2
 requests==2.13.0
 sympy==1.0

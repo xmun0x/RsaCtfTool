@@ -14,7 +14,7 @@ this stuff is worth it, you can buy me a beer in return.
 ----------------------------------------------------------------------------
 '''
 
-from Crypto.PublicKey import RSA
+from cryptography.hazmat.primitives.asymmetric import rsa
 import signal
 import gmpy2
 import requests
