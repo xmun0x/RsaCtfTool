@@ -57,6 +57,7 @@ python RsaCtfToolcli.py --createpub --n 7828374823761928712873129873981723 --e 6
  - Some kind of polynomial search...
  - Brainstorm moar attack types!
  - Saw a CTF where the supplied N was a 2048 bit prime. Detect this and solve using phi = (n - 1) * (n - 1) which seemed to work for that CTF
+ - Replace pycrypto dependency with [cryptography.io](https://cryptography.io/)
 
 ### Tests
 
