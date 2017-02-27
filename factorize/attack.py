@@ -257,7 +257,7 @@ class RSAAttack(object):
                 if self.priv_key is not None:
                     if self.args.private:
                         print(self.priv_key)
-                    with open("priv-" + self.fname , "w") as f:
+                    with open("priv-" + self.fname, "w") as f:
                         f.write(str(self.priv_key))
                     break
 
