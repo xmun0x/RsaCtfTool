@@ -19,6 +19,7 @@ import signal
 import gmpy2
 import requests
 import re
+import os.path
 
 
 class FactorizationError(Exception):
@@ -88,6 +89,7 @@ class PrivateKey(object):
 class RSAAttack(object):
     def __init__(self, args):
         # Load public key
+        self.fname = os.path.basename(args.publickey)
         key = open(args.publickey, 'r').read()
         self.pubkeyfile = args.publickey
         self.pub_key = PublicKey(key)
@@ -219,6 +221,10 @@ class RSAAttack(object):
                 print("[*] Warning: Yafu SIQS attack module missing (siqs.py)")
             return
 
+        if self.pub_key.n.bit_length() > 1024:
+            print("[*] Warning: Modulus too large for SIQS attack module")
+            return
+
         siqsobj = SiqsAttack(self.args, self.pub_key.n)
         if siqsobj.checkyafu() and siqsobj.testyafu():
             siqsobj.doattack()
@@ -251,6 +257,8 @@ class RSAAttack(object):
                 if self.priv_key is not None:
                     if self.args.private:
                         print(self.priv_key)
+                    with open("priv-" + self.fname , "w") as f:
+                        f.write(str(self.priv_key))
                     break
 
                 if self.unciphered is not None:

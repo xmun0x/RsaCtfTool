@@ -19,7 +19,7 @@ this stuff is worth it, you can buy me a beer in return.
 
 from factorize import RSAAttack, create_pub
 import argparse
-import glob
+from glob import glob
 import gmpy2
 
 
