@@ -1,4 +1,4 @@
-[![Build Status](https://travis-ci.org/xmunoz/RsaCtfTool.svg?branch=master)](https://travis-ci.org/xmunoz/RsaCtfTool)
+[![Build Status](https://travis-ci.org/xmun0x/RsaCtfTool.svg?branch=master)](https://travis-ci.org/xmun0x/RsaCtfTool)
 
 # RsaCtfTool
 RsaCtfTool is a utility to uncipher data from a weak public key and try to recover the private key. Here is the list of attacks implemented in RsaCtfTool:
